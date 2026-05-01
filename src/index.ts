@@ -4,6 +4,7 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
+import pool from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import priceRoutes from "./routes/priceRoutes.js";
@@ -60,6 +61,15 @@ app.use("/api/status", statusRoutes);
 
 app.get("/", (req: Request, res: Response) => {
     res.send("Backend running with TypeScript and PostgreSQL 🚀");
+});
+
+app.get("/health", async (_req: Request, res: Response) => {
+    try {
+        await pool.query("SELECT 1");
+        res.json({ status: "ok", db: "connected", uptime: process.uptime() });
+    } catch {
+        res.status(503).json({ status: "error", db: "unreachable", uptime: process.uptime() });
+    }
 });
 
 const PORT = process.env.PORT || 5000;
