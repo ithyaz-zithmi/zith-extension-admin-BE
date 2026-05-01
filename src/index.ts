@@ -28,7 +28,14 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
     : ['http://localhost:5173'];
 
-app.use(helmet());
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+app.use(express.json({ limit: '10kb' }));
 
 app.get("/health", async (_req: Request, res: Response) => {
     try {
@@ -38,13 +45,6 @@ app.get("/health", async (_req: Request, res: Response) => {
         res.status(503).json({ status: "error", db: "unreachable", uptime: process.uptime() });
     }
 });
-app.use(cors({
-    origin: allowedOrigins,
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-}));
-app.use(express.json({ limit: '10kb' }));
 
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
