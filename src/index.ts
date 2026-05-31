@@ -10,11 +10,15 @@ import contactRoutes from "./routes/contactRoutes.js";
 import priceRoutes from "./routes/priceRoutes.js";
 import demoRoutes from "./routes/demoRoutes.js";
 import statusRoutes from "./routes/statusRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
+import pageRoutes from "./routes/pageRoutes.js";
 import { initDb } from "./models/userModel.js";
 import { initContactTable } from "./models/contactModel.js";
 import { initPriceTable } from "./models/priceModel.js";
 import { initDemoTable } from "./models/demoModel.js";
 import { initStatusTables } from "./models/statusModel.js";
+import { initProductTable } from "./models/productModel.js";
+import { initPageTable } from "./models/pageModel.js";
 
 dotenv.config();
 
@@ -55,11 +59,15 @@ const authLimiter = rateLimit({
 });
 
 // Initialize Database
-initDb();
-initContactTable();
-initPriceTable();
-initDemoTable();
-initStatusTables();
+(async () => {
+    await initDb();
+    await initContactTable();
+    await initPriceTable();
+    await initDemoTable();
+    await initStatusTables();
+    await initProductTable();
+    await initPageTable();
+})();
 
 // Routes
 app.use("/api/auth", authLimiter, authRoutes);
@@ -67,6 +75,8 @@ app.use("/api/contact", contactRoutes);
 app.use("/api/price-settings", priceRoutes);
 app.use("/api/demo-requests", demoRoutes);
 app.use("/api/status", statusRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/pages", pageRoutes);
 
 app.get("/", (req: Request, res: Response) => {
     res.send("Backend running with TypeScript and PostgreSQL 🚀");
