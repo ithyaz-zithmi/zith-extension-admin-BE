@@ -37,12 +37,12 @@ export const initContactTable = async () => {
         DO $$ 
         BEGIN 
             IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                           WHERE table_name='contact_submissions' AND column_name='status') THEN
+                           WHERE table_schema = current_schema() AND table_name='contact_submissions' AND column_name='status') THEN
                 ALTER TABLE contact_submissions ADD COLUMN status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'contacted', 'scheduled', 'completed', 'cancelled'));
             END IF;
             
             IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                           WHERE table_name='contact_submissions' AND column_name='action_made') THEN
+                           WHERE table_schema = current_schema() AND table_name='contact_submissions' AND column_name='action_made') THEN
                 ALTER TABLE contact_submissions ADD COLUMN action_made VARCHAR(255);
             END IF;
         END $$;

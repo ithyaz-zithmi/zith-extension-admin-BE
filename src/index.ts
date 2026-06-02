@@ -8,14 +8,14 @@ import pool from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import priceRoutes from "./routes/priceRoutes.js";
-import demoRoutes from "./routes/demoRoutes.js";
+import contactSalesRoutes from "./routes/contactSalesRoutes.js";
 import statusRoutes from "./routes/statusRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import pageRoutes from "./routes/pageRoutes.js";
 import { initDb } from "./models/userModel.js";
 import { initContactTable } from "./models/contactModel.js";
 import { initPriceTable } from "./models/priceModel.js";
-import { initDemoTable } from "./models/demoModel.js";
+import { initContactSalesTable } from "./models/contactSalesModel.js";
 import { initStatusTables } from "./models/statusModel.js";
 import { initProductTable } from "./models/productModel.js";
 import { initPageTable } from "./models/pageModel.js";
@@ -30,7 +30,7 @@ const app = express();
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
-    : ['http://localhost:5173'];
+    : ['http://localhost:5173', 'http://localhost:3000'];
 
 app.use(cors({
     origin: allowedOrigins,
@@ -63,7 +63,7 @@ const authLimiter = rateLimit({
     await initDb();
     await initContactTable();
     await initPriceTable();
-    await initDemoTable();
+    await initContactSalesTable();
     await initStatusTables();
     await initProductTable();
     await initPageTable();
@@ -73,7 +73,7 @@ const authLimiter = rateLimit({
 app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/price-settings", priceRoutes);
-app.use("/api/demo-requests", demoRoutes);
+app.use("/api/contact-sales", contactSalesRoutes);
 app.use("/api/status", statusRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/pages", pageRoutes);
